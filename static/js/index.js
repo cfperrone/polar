@@ -9,7 +9,7 @@ function updateWebcam() {
 }
 
 $(document).ready(function() {
-    setTimeout(updateWebcam, 3000);
+    setTimeout(updateWebcam, 2000);
 });
 
 $('.remote button').click(function(event) {
@@ -18,6 +18,7 @@ $('.remote button').click(function(event) {
     var action = $(this).data('action');
 
     $.post('/cmd', { action: action }, function(data) {
-        setTimeout(updateWebcam, 3000);
+        $('.timestamp').html("Updating...");
+        setTimeout(updateWebcam, 2000);
     });
 });
