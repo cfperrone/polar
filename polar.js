@@ -101,12 +101,9 @@ function getNewImage() {
 }
 
 function getImageUpdateDate() {
-    fs.exists(IMAGE_PATH, function(exists) {
-        if (exists == false) {
-            return 0;
-        }
-
+    if (fs.existsSync(IMAGE_PATH)) {
         var stat = fs.statSync(IMAGE_PATH);
         return stat['mtime'];
-    });
+    }
+    return 0;
 }
