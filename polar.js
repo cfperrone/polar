@@ -34,14 +34,12 @@ app.set('view engine', 'mustache');
 app.set('views', __dirname + '/views');
 
 app.get('/', function(req, res) {
-    // Load new webcam image on page load
-    getNewImage();
-
     res.render('index', {
         pageTitle: 'Air Conditioner Remote',
-        imageDate: getImageUpdateDate(),
+        imageDate: getImageUpdateDate()
     });
 });
+// -- Sends a command
 app.post('/cmd', function(req, res) {
     var action = req.body.action;
 
@@ -54,8 +52,20 @@ app.post('/cmd', function(req, res) {
     res.send("OK");
 
 });
-app.post('/imageTime', function(req, res) {
-    res.send(getImageUpdateDate());
+// -- Captures a new image and renders the cam template
+app.get('/image', function(req, res) {
+    execFile(STREAMER_COMMAND, STREAMER_ARGS, function(err, stdout, stderr) {
+        if (err !== null) {
+            console.log("STREAMER ERROR:" + err);
+            return;
+        }
+
+        var date = new Date();
+        res.render('cam-image', {
+            timestamp: date.getTime(),
+            imageDate: getImageUpdateDate()
+        });
+    });
 });
 
 app.listen(80);
@@ -76,27 +86,6 @@ function execute(action) {
         if (err !== null) {
             console.log("LIRC ERROR: " + err);
         }
-
-        // Update the webcam image
-        getNewImage();
-    });
-}
-
-// -- Execute the streamer command to retrieve a new image from the webcam
-function getNewImage() {
-    console.log("Updaing webcam");
-
-    if (streamer_execute == true) {
-        console.log("Skipped updating because streamer is already running");
-        return;
-    }
-
-    streamer_execute = true;
-    execFile(STREAMER_COMMAND, STREAMER_ARGS, function(err, stdout, stderr) {
-        if (err !== null) {
-            console.log("STREAMER ERROR: " + err);
-        }
-        streamer_execute = false;
     });
 }
 

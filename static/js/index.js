@@ -1,15 +1,16 @@
 // index.js
 
 function updateWebcam() {
-    var date = new Date();
-    $.post('/imageTime', { }, function(data) {
-        $('.webcam').attr('src', '/webcam.jpeg?' + date.getTime());
-        $('.timestamp').html(data);
+    $.get('/image', { }, function(data) {
+        $('.cam').html(data);
+        $('.webcam').on('click', function() {
+            updateWebcam();
+        });
     });
 }
 
 $(document).ready(function() {
-    setTimeout(updateWebcam, 2000);
+    updateWebcam();
 });
 
 $('.remote button').click(function(event) {
@@ -18,7 +19,6 @@ $('.remote button').click(function(event) {
     var action = $(this).data('action');
 
     $.post('/cmd', { action: action }, function(data) {
-        $('.timestamp').html("Updating...");
-        setTimeout(updateWebcam, 2000);
+        updateWebcam();
     });
 });
