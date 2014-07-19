@@ -38,7 +38,7 @@ app.get('/', function(req, res) {
     getNewImage();
 
     res.render('index', {
-        pageTitle: 'This is a title',
+        pageTitle: 'Air Conditioner Remote',
         imageDate: getImageUpdateDate(),
     });
 });
